@@ -6,8 +6,9 @@
 	using UnityEngine;
 	using UnityEngine.EventSystems;
 	using System;
+    using UnityEngine.XR.Interaction.Toolkit.Inputs;
 
-	public class QuadTreeCameraMovement : MonoBehaviour
+    public class QuadTreeCameraMovement : MonoBehaviour
 	{
 		[SerializeField]
 		[Range(1, 20)]
@@ -73,6 +74,7 @@
 				else
 				{
 					HandleMouseAndKeyBoard();
+
 				}
 			}
 		}
@@ -85,15 +87,16 @@
 			ZoomMapUsingTouchOrMouse(scrollDelta);
 
 
-			//pan keyboard
-			float xMove = Input.GetAxis("Horizontal");
-			float zMove = Input.GetAxis("Vertical");
+            //pan keyboard
+            float xMove = Input.GetAxis("Horizontal");
+            float zMove = Input.GetAxis("Vertical");
 
-			PanMapUsingKeyBoard(xMove, zMove);
+            PanMapUsingKeyBoard(xMove, zMove);
 
+			//pan controller
 
-			//pan mouse
-			PanMapUsingTouchOrMouse();
+            //pan mouse
+            PanMapUsingTouchOrMouse();
 		}
 
 		void HandleTouch()
