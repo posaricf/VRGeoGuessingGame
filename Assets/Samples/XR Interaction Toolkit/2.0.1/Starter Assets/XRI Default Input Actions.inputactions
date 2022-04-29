@@ -278,6 +278,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "thumbstickX",
+                    "type": "Value",
+                    "id": "45f8a52e-b35a-47fd-9fab-c861737f7ff8",
+                    "expectedControlType": "Stick",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "thumbstickY",
+                    "type": "Value",
+                    "id": "695e233a-41ae-45a6-a719-3ac2e00552d9",
+                    "expectedControlType": "Stick",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -478,6 +496,28 @@
                     "action": "Translate Anchor",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "db94a0c3-34d3-4170-9497-d4e29e4761d6",
+                    "path": "<XRController>{LeftHand}/thumbstick/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "thumbstickX",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3736d690-a180-46c1-a29c-7d0018ece26e",
+                    "path": "<XRController>{LeftHand}/thumbstick/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Generic XR Controller",
+                    "action": "thumbstickY",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },

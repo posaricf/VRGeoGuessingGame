@@ -7,9 +7,13 @@
 	using UnityEngine.EventSystems;
 	using System;
     using UnityEngine.XR.Interaction.Toolkit.Inputs;
+    using UnityEngine.InputSystem;
 
     public class QuadTreeCameraMovement : MonoBehaviour
 	{
+		public InputActionReference moveXAction = null;
+		public InputActionReference moveYAction = null;
+
 		[SerializeField]
 		[Range(1, 20)]
 		public float _panSpeed = 1.0f;
@@ -26,6 +30,7 @@
 		[SerializeField]
 		bool _useDegreeMethod;
 
+		private Vector2 thumbAxis;
 		private Vector3 _origin;
 		private Vector3 _mousePosition;
 		private Vector3 _mousePositionPrevious;
@@ -45,7 +50,9 @@
 			{
 				_isInitialized = true;
 			};
-		}
+            moveXAction.action.performed += MoveX;
+            moveYAction.action.performed += MoveY;
+        }
 
 		public void Update()
 		{
@@ -79,7 +86,19 @@
 			}
 		}
 
-		void HandleMouseAndKeyBoard()
+        void MoveX(InputAction.CallbackContext context)
+        {
+            thumbAxis.x = context.ReadValue<float>();
+            //Debug.Log(thumbAxis);
+        }
+
+        void MoveY(InputAction.CallbackContext context)
+        {
+            thumbAxis.y = context.ReadValue<float>();
+            //Debug.Log(thumbAxis);
+        }
+
+        void HandleMouseAndKeyBoard()
 		{
 			// zoom
 			float scrollDelta = 0.0f;

@@ -831,6 +831,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c699b8e1864b4b248acb7a04ede9480, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveXAction: {fileID: -8688243704748288299, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  moveYAction: {fileID: 6053078404138877957, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
   _panSpeed: 1
   _zoomSpeed: 0.25
   _referenceCamera: {fileID: 1438999495}
@@ -3044,7 +3048,7 @@ Skybox:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1787361570}
   m_Enabled: 1
-  m_CustomSkybox: {fileID: 2100000, guid: 89325688cffa393429002be676711366, type: 2}
+  m_CustomSkybox: {fileID: 2100000, guid: 683de6194a684dc4aab5c95a63962ce5, type: 2}
 --- !u!1 &1837441743
 GameObject:
   m_ObjectHideFlags: 0
