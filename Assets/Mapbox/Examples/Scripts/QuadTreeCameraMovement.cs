@@ -25,7 +25,7 @@
 		public Camera _referenceCamera;
 
 		[SerializeField]
-		AbstractMap _mapManager;
+		public AbstractMap _mapManager;
 
 		[SerializeField]
 		bool _useDegreeMethod;
@@ -81,7 +81,7 @@
 				else
 				{
 					HandleMouseAndKeyBoard();
-
+					HandleThumbstick();
 				}
 			}
 		}
@@ -89,14 +89,31 @@
         void MoveX(InputAction.CallbackContext context)
         {
             thumbAxis.x = context.ReadValue<float>();
-            //Debug.Log(thumbAxis);
+            //Debug.Log("X VALUE: " + thumbAxis.x);
         }
 
         void MoveY(InputAction.CallbackContext context)
         {
             thumbAxis.y = context.ReadValue<float>();
-            //Debug.Log(thumbAxis);
+            //Debug.Log("Y VALUE: " + thumbAxis.y);
         }
+
+		void HandleThumbstick()
+        {
+			if (Math.Abs(thumbAxis.x) > 0.0f || Math.Abs(thumbAxis.y) > 0.0f)
+			{
+				// Get the number of degrees in a tile at the current zoom level.
+				// Divide it by the tile width in pixels ( 256 in our case)
+				// to get degrees represented by each pixel.
+				// Keyboard offset is in pixels, therefore multiply the factor with the offset to move the center.
+				float factor = _panSpeed * (Conversions.GetTileScaleInDegrees((float)_mapManager.CenterLatitudeLongitude.x, _mapManager.AbsoluteZoom));
+
+				var latitudeLongitude = new Vector2d(_mapManager.CenterLatitudeLongitude.x + thumbAxis.y * factor * 2.0f, _mapManager.CenterLatitudeLongitude.y + thumbAxis.x * factor * 4.0f);
+
+				Debug.Log("LAT LONG: " + latitudeLongitude);
+				_mapManager.UpdateMap(latitudeLongitude, _mapManager.Zoom);
+			}
+		}
 
         void HandleMouseAndKeyBoard()
 		{
@@ -174,6 +191,7 @@
 
 				var latitudeLongitude = new Vector2d(_mapManager.CenterLatitudeLongitude.x + zMove * factor * 2.0f, _mapManager.CenterLatitudeLongitude.y + xMove * factor * 4.0f);
 
+				//Debug.Log("LAT LONG: " + latitudeLongitude);
 				_mapManager.UpdateMap(latitudeLongitude, _mapManager.Zoom);
 			}
 		}
@@ -192,9 +210,11 @@
 
 		void UseMeterConversion()
 		{
-			if (Input.GetMouseButtonUp(1))
+
+            if (Input.GetMouseButtonUp(1))
 			{
 				var mousePosScreen = Input.mousePosition;
+				//Debug.Log(mousePosScreen);
 				//assign distance of camera to ground plane to z, otherwise ScreenToWorldPoint() will always return the position of the camera
 				//http://answers.unity3d.com/answers/599100/view.html
 				mousePosScreen.z = _referenceCamera.transform.localPosition.y;
@@ -238,6 +258,7 @@
 							float factor = _panSpeed * Conversions.GetTileScaleInMeters((float)0, _mapManager.AbsoluteZoom) / _mapManager.UnityTileSize;
 							var latlongDelta = Conversions.MetersToLatLon(new Vector2d(offset.x * factor, offset.z * factor));
 							var newLatLong = _mapManager.CenterLatitudeLongitude + latlongDelta;
+							//Debug.Log("NEW LAT LONG: " + newLatLong);
 
 							_mapManager.UpdateMap(newLatLong, _mapManager.Zoom);
 						}
