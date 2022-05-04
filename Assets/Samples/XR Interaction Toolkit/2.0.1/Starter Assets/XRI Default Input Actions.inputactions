@@ -867,6 +867,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "marker",
+                    "type": "Button",
+                    "id": "ba205039-8d51-4bfc-a05e-79d1f669b4b1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1076,6 +1085,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "010e1684-727c-4280-afb9-60aa90f382e3",
+                    "path": "<XRController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "marker",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "98a1eae9-ae99-4da3-91a0-ffeddae58db7",
+                    "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "marker",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -8,19 +8,24 @@
 	using System;
     using UnityEngine.XR.Interaction.Toolkit.Inputs;
     using UnityEngine.InputSystem;
+    using UnityEngine.UI;
+    using System.Collections.Generic;
 
     public class QuadTreeCameraMovement : MonoBehaviour
 	{
 		public InputActionReference moveXAction = null;
 		public InputActionReference moveYAction = null;
 		public InputActionReference zoomAction = null;
+		public InputActionReference markerAction = null;
+		//public Button submitButton;
+		public SpawnOnMap spawnOnMap;
 
 		[SerializeField]
 		[Range(1, 20)]
 		public float _panSpeed = 1.0f;
 
 		[SerializeField]
-		float _zoomSpeed = 0.25f;
+		public float _zoomSpeed = 0.25f;
 
 		[SerializeField]
 		public Camera _referenceCamera;
@@ -31,6 +36,15 @@
 		[SerializeField]
 		bool _useDegreeMethod;
 
+		[SerializeField]
+		float _spawnScale = 100f;
+
+		[SerializeField]
+		GameObject _markerPrefab;
+
+		List<GameObject> markers;
+
+		Vector2d latitudeLongitude;
 		private Vector2 zoomAxis;
 		private Vector2 thumbAxis;
 		private Vector3 _origin;
@@ -55,6 +69,8 @@
             moveXAction.action.performed += MoveX;
             moveYAction.action.performed += MoveY;
 			zoomAction.action.performed += ZoomThumbstick;
+			//submitButton.onClick.AddListener(SubmitOnClick);
+			markerAction.action.performed += CreateMarker;
         }
 
 		public void Update()
@@ -106,9 +122,10 @@
 			zoomAxis.y = ctx.ReadValue<float>();
         }
 
-		void HandleThumbstick()
+		public void HandleThumbstick()
         {
 			var zoom = Mathf.Max(0.0f, Mathf.Min(_mapManager.Zoom + zoomAxis.y * _zoomSpeed, 21.0f));
+			//Debug.Log("ZOOM:" + zoom);
 			if (Math.Abs(zoom - _mapManager.Zoom) > 0.0f)
 			{
 				_mapManager.UpdateMap(_mapManager.CenterLatitudeLongitude, zoom);
@@ -122,14 +139,43 @@
 				// Keyboard offset is in pixels, therefore multiply the factor with the offset to move the center.
 				float factor = _panSpeed * (Conversions.GetTileScaleInDegrees((float)_mapManager.CenterLatitudeLongitude.x, _mapManager.AbsoluteZoom));
 
-				var latitudeLongitude = new Vector2d(_mapManager.CenterLatitudeLongitude.x + thumbAxis.y * factor * 2.0f, _mapManager.CenterLatitudeLongitude.y + thumbAxis.x * factor * 4.0f);
+				latitudeLongitude = new Vector2d(_mapManager.CenterLatitudeLongitude.x + thumbAxis.y * factor * 2.0f, _mapManager.CenterLatitudeLongitude.y + thumbAxis.x * factor * 4.0f);
 
-				Debug.Log("LAT LONG: " + latitudeLongitude);
+				//Debug.Log("LAT LONG: " + latitudeLongitude);
 				_mapManager.UpdateMap(latitudeLongitude, _mapManager.Zoom);
 			}
 		}
 
-        void HandleMouseAndKeyBoard()
+		//void SubmitOnClick()
+  //      {
+		//	var instance = Instantiate(_markerPrefab);
+
+		//	//instance.transform.localPosition = spawnOnMap._map.GeoToWorldPosition(latitudeLongitude, true);
+		//	instance.transform.localPosition = _mapManager.GeoToWorldPosition(latitudeLongitude, true);
+		//	instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+		//}
+
+		void CreateMarker(InputAction.CallbackContext ctx)
+        {
+			var value = ctx.ReadValue<float>();
+			var toRemove = GameObject.Find("CustomMarkerPrefab(Clone)");
+			if (toRemove != null)
+			{
+				Destroy(toRemove);
+			}
+			
+			if (value > 0)
+			{
+				var instance = Instantiate(_markerPrefab);
+
+				instance.transform.localPosition = _mapManager.GeoToWorldPosition(latitudeLongitude, true);
+				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+
+				instance.transform.parent = _mapManager.transform;
+			}
+        }
+
+		void HandleMouseAndKeyBoard()
 		{
 			// zoom
 			float scrollDelta = 0.0f;
