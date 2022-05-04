@@ -13,6 +13,7 @@
 	{
 		public InputActionReference moveXAction = null;
 		public InputActionReference moveYAction = null;
+		public InputActionReference zoomAction = null;
 
 		[SerializeField]
 		[Range(1, 20)]
@@ -30,6 +31,7 @@
 		[SerializeField]
 		bool _useDegreeMethod;
 
+		private Vector2 zoomAxis;
 		private Vector2 thumbAxis;
 		private Vector3 _origin;
 		private Vector3 _mousePosition;
@@ -52,6 +54,7 @@
 			};
             moveXAction.action.performed += MoveX;
             moveYAction.action.performed += MoveY;
+			zoomAction.action.performed += ZoomThumbstick;
         }
 
 		public void Update()
@@ -98,8 +101,19 @@
             //Debug.Log("Y VALUE: " + thumbAxis.y);
         }
 
+		void ZoomThumbstick(InputAction.CallbackContext ctx)
+        {
+			zoomAxis.y = ctx.ReadValue<float>();
+        }
+
 		void HandleThumbstick()
         {
+			var zoom = Mathf.Max(0.0f, Mathf.Min(_mapManager.Zoom + zoomAxis.y * _zoomSpeed, 21.0f));
+			if (Math.Abs(zoom - _mapManager.Zoom) > 0.0f)
+			{
+				_mapManager.UpdateMap(_mapManager.CenterLatitudeLongitude, zoom);
+			}
+
 			if (Math.Abs(thumbAxis.x) > 0.0f || Math.Abs(thumbAxis.y) > 0.0f)
 			{
 				// Get the number of degrees in a tile at the current zoom level.
@@ -120,6 +134,7 @@
 			// zoom
 			float scrollDelta = 0.0f;
 			scrollDelta = Input.GetAxis("Mouse ScrollWheel");
+			//Debug.Log("SCROLL FLOAT: " + scrollDelta);
 			ZoomMapUsingTouchOrMouse(scrollDelta);
 
 

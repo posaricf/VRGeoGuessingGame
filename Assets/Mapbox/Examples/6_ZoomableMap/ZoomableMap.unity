@@ -969,6 +969,8 @@ MonoBehaviour:
     type: 3}
   moveYAction: {fileID: 6053078404138877957, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
+  zoomAction: {fileID: -5315838124719791028, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
   _panSpeed: 1
   _zoomSpeed: 0.25
   _referenceCamera: {fileID: 1438999495}
@@ -1521,7 +1523,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 616487811}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb689f4dc67a29e4baa8aade1f0168b0, type: 3}
   m_Name: 
