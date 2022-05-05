@@ -18,7 +18,7 @@
 		public InputActionReference zoomAction = null;
 		public InputActionReference markerAction = null;
 		//public Button submitButton;
-		public SpawnOnMap spawnOnMap;
+		//public SpawnOnMap spawnOnMap;
 
 		[SerializeField]
 		[Range(1, 20)]
@@ -44,6 +44,7 @@
 
 		List<GameObject> markers;
 
+		Vector2d markerLatLong;
 		Vector2d latitudeLongitude;
 		private Vector2 zoomAxis;
 		private Vector2 thumbAxis;
@@ -101,6 +102,8 @@
 				{
 					HandleMouseAndKeyBoard();
 					HandleThumbstick();
+
+					FixMarker();
 				}
 			}
 		}
@@ -163,17 +166,34 @@
 			{
 				Destroy(toRemove);
 			}
-			
+
+			//Debug.Log("primary button value: " + value);
 			if (value > 0)
 			{
 				var instance = Instantiate(_markerPrefab);
 
 				instance.transform.localPosition = _mapManager.GeoToWorldPosition(latitudeLongitude, true);
 				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+				markerLatLong = new Vector2d(latitudeLongitude.x, latitudeLongitude.y);
 
 				instance.transform.parent = _mapManager.transform;
 			}
         }
+
+		void FixMarker()
+        {
+			try 
+            {
+				var marker = GameObject.Find("CustomMarkerPrefab(Clone)");
+				marker.transform.position = _mapManager.GeoToWorldPosition(markerLatLong, true);
+				//marker.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+			}
+			catch (Exception ex)
+            {
+				Debug.Log("No marker available");
+            }
+			
+		}
 
 		void HandleMouseAndKeyBoard()
 		{

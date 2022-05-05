@@ -876,6 +876,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "show map",
+                    "type": "Button",
+                    "id": "546683dc-87b0-4514-823f-a56eed4971ef",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1091,7 +1100,7 @@
                 {
                     "name": "",
                     "id": "010e1684-727c-4280-afb9-60aa90f382e3",
-                    "path": "<XRController>{RightHand}/primaryButton",
+                    "path": "<XRController>{RightHand}/secondaryButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -1107,6 +1116,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "marker",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3956ebb5-aaeb-4c63-98af-6954924a6a73",
+                    "path": "<XRController>{RightHand}/primaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "show map",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
