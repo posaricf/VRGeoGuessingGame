@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 699236baf81afc2468a62358a7b64064, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.22449791, g: 0.24366243, b: 0.37803534, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1007,6 +1007,8 @@ MonoBehaviour:
   zoomAction: {fileID: -5315838124719791028, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
   markerAction: {fileID: 6420465692334032401, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
+  distanceAction: {fileID: 2365598205833895753, guid: c348712bda248c246b8c49b3db54643f,
     type: 3}
   _panSpeed: 1
   _zoomSpeed: 0.25
@@ -2311,6 +2313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1431834364}
   - component: {fileID: 1431834363}
+  - component: {fileID: 1431834365}
   m_Layer: 3
   m_Name: XR Origin
   m_TagString: Untagged
@@ -2350,6 +2353,26 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1431834365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431834362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ddf5c816a25b3b499b0158b51a4876f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skybox:
+  - {fileID: 2100000, guid: 699236baf81afc2468a62358a7b64064, type: 2}
+  - {fileID: 2100000, guid: 683de6194a684dc4aab5c95a63962ce5, type: 2}
+  - {fileID: 2100000, guid: 69439537171da3b46a06b0173284c867, type: 2}
+  - {fileID: 2100000, guid: 56ce87c054bebb0469b71eaaf7fdc80e, type: 2}
+  - {fileID: 2100000, guid: b3164f957091f79429426d2bffff858f, type: 2}
+  backgroundAction: {fileID: 2365598205833895753, guid: c348712bda248c246b8c49b3db54643f,
+    type: 3}
 --- !u!1 &1438999494
 GameObject:
   m_ObjectHideFlags: 0
@@ -3322,8 +3345,8 @@ Skybox:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1787361570}
-  m_Enabled: 1
-  m_CustomSkybox: {fileID: 2100000, guid: 683de6194a684dc4aab5c95a63962ce5, type: 2}
+  m_Enabled: 0
+  m_CustomSkybox: {fileID: 2100000, guid: 69439537171da3b46a06b0173284c867, type: 2}
 --- !u!1 &1837441743
 GameObject:
   m_ObjectHideFlags: 0

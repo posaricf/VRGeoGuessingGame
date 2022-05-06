@@ -296,6 +296,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "changeSkybox",
+                    "type": "Button",
+                    "id": "d746a801-7ffe-41d5-b46b-c5e9e82c52d1",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -516,6 +525,17 @@
                     "processors": "",
                     "groups": "Generic XR Controller",
                     "action": "thumbstickY",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "38e0905f-9b40-41d1-85af-108b6db0bcfb",
+                    "path": "<XRController>{LeftHand}/secondaryButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "changeSkybox",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

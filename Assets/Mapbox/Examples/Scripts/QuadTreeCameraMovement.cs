@@ -17,6 +17,7 @@
 		public InputActionReference moveYAction = null;
 		public InputActionReference zoomAction = null;
 		public InputActionReference markerAction = null;
+		public InputActionReference distanceAction = null;
 		//public Button submitButton;
 		//public SpawnOnMap spawnOnMap;
 
@@ -44,6 +45,15 @@
 
 		List<GameObject> markers;
 
+		//private Vector2d[] locationCoords;
+		Vector2d location0;
+		Vector2d location1;
+		Vector2d location2;
+		Vector2d location3;
+		Vector2d location4;
+		double result;
+		double total;
+		int locationCounter;
 		Vector2d markerLatLong;
 		Vector2d latitudeLongitude;
 		private Vector2 zoomAxis;
@@ -72,6 +82,22 @@
 			zoomAction.action.performed += ZoomThumbstick;
 			//submitButton.onClick.AddListener(SubmitOnClick);
 			markerAction.action.performed += CreateMarker;
+			distanceAction.action.performed += CalculateDistance;
+
+			location0 = new Vector2d(37.8097997, -122.4105405); //pier39
+			location1 = new Vector2d(40.7821132, -73.9702457); //central park
+			location2 = new Vector2d(37.8632798, -122.5878597); //muir beach
+			location3 = new Vector2d(25.7768336, -80.1843875); //miami
+			location4 = new Vector2d(40.7579174, -73.9861626); //times square
+			locationCounter = 0;
+			total = 0;
+
+			//Debug.Log(location1);
+			//Debug.Log(location2);
+			//Debug.Log(location3);
+			//Debug.Log(location4);
+			//Debug.Log(location5);
+			
         }
 
 		public void Update()
@@ -149,15 +175,6 @@
 			}
 		}
 
-		//void SubmitOnClick()
-  //      {
-		//	var instance = Instantiate(_markerPrefab);
-
-		//	//instance.transform.localPosition = spawnOnMap._map.GeoToWorldPosition(latitudeLongitude, true);
-		//	instance.transform.localPosition = _mapManager.GeoToWorldPosition(latitudeLongitude, true);
-		//	instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-		//}
-
 		void CreateMarker(InputAction.CallbackContext ctx)
         {
 			var value = ctx.ReadValue<float>();
@@ -193,6 +210,93 @@
 				Debug.Log("No marker available");
             }
 			
+		}
+
+		static double toRadians(
+		   double angleIn10thofaDegree)
+		{
+			// Angle in 10th
+			// of a degree
+			return (angleIn10thofaDegree *
+						   Math.PI) / 180;
+		}
+		static double distance(double lat1,
+							   double lat2,
+							   double lon1,
+							   double lon2)
+		{
+
+			// The math module contains
+			// a function named toRadians
+			// which converts from degrees
+			// to radians.
+			lon1 = toRadians(lon1);
+			lon2 = toRadians(lon2);
+			lat1 = toRadians(lat1);
+			lat2 = toRadians(lat2);
+
+			// Haversine formula
+			double dlon = lon2 - lon1;
+			double dlat = lat2 - lat1;
+			double a = Math.Pow(Math.Sin(dlat / 2), 2) +
+					   Math.Cos(lat1) * Math.Cos(lat2) *
+					   Math.Pow(Math.Sin(dlon / 2), 2);
+
+			double c = 2 * Math.Asin(Math.Sqrt(a));
+
+			// Radius of earth in
+			// kilometers. Use 3956
+			// for miles
+			double r = 6371;
+
+			// calculate the result
+			return (c * r);
+		}
+
+		void CalculateDistance(InputAction.CallbackContext ctx)
+        {
+			var value = ctx.ReadValue<float>();
+			if (value > 0 && locationCounter < 5)
+			{
+				switch (locationCounter)
+				{
+					case 0:
+						result = distance(location0.x, markerLatLong.x, location0.y, markerLatLong.y);
+						locationCounter++;
+						total += result;
+						Debug.Log("Distance to Pier 39: " + result);
+						break;
+					case 1:
+						result = distance(location1.x, markerLatLong.x, location1.y, markerLatLong.y);
+						locationCounter++;
+						total += result;
+						Debug.Log("Distance to Central Park: " + result);
+						break;
+					case 2:
+						result = distance(location2.x, markerLatLong.x, location2.y, markerLatLong.y);
+						locationCounter++;
+						total += result;
+						Debug.Log("Distance to Muir Beach: " + result);
+						break;
+					case 3:
+						result = distance(location3.x, markerLatLong.x, location3.y, markerLatLong.y);
+						locationCounter++;
+						total += result;
+						Debug.Log("Distance to Miami: " + result);
+						break;
+					case 4:
+						result = distance(location4.x, markerLatLong.x, location4.y, markerLatLong.y);
+						locationCounter++;
+						total += result;
+						Debug.Log("Distance to Times Square: " + result);
+						break;
+
+				}
+			}
+			else if (locationCounter == 5)
+            {
+				Debug.Log("Total kilometers missed: " + total);
+            }
 		}
 
 		void HandleMouseAndKeyBoard()
