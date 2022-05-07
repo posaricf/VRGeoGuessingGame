@@ -18,7 +18,12 @@
 		public InputActionReference zoomAction = null;
 		public InputActionReference markerAction = null;
 		public InputActionReference distanceAction = null;
-		//public Button submitButton;
+
+		public Text levelPoints;
+		public Text totalPoints;
+		string levelMsg;
+		string totalMsg;
+
 		//public SpawnOnMap spawnOnMap;
 
 		[SerializeField]
@@ -45,17 +50,19 @@
 
 		List<GameObject> markers;
 
-		//private Vector2d[] locationCoords;
 		Vector2d location0;
 		Vector2d location1;
 		Vector2d location2;
 		Vector2d location3;
 		Vector2d location4;
+
 		double result;
 		double total;
 		int locationCounter;
+
 		Vector2d markerLatLong;
 		Vector2d latitudeLongitude;
+
 		private Vector2 zoomAxis;
 		private Vector2 thumbAxis;
 		private Vector3 _origin;
@@ -91,13 +98,8 @@
 			location4 = new Vector2d(40.7579174, -73.9861626); //times square
 			locationCounter = 0;
 			total = 0;
-
-			//Debug.Log(location1);
-			//Debug.Log(location2);
-			//Debug.Log(location3);
-			//Debug.Log(location4);
-			//Debug.Log(location5);
-			
+			levelMsg = "You have missed the target location by: n/a";
+			totalMsg = "Current total kilometers missed: n/a";
         }
 
 		public void Update()
@@ -130,6 +132,9 @@
 					HandleThumbstick();
 
 					FixMarker();
+
+					levelPoints.text = levelMsg;
+					totalPoints.text = totalMsg;
 				}
 			}
 		}
@@ -264,30 +269,35 @@
 						result = distance(location0.x, markerLatLong.x, location0.y, markerLatLong.y);
 						locationCounter++;
 						total += result;
+						ScoreOutput(result, total);
 						Debug.Log("Distance to Pier 39: " + result);
 						break;
 					case 1:
 						result = distance(location1.x, markerLatLong.x, location1.y, markerLatLong.y);
 						locationCounter++;
 						total += result;
+						ScoreOutput(result, total);
 						Debug.Log("Distance to Central Park: " + result);
 						break;
 					case 2:
 						result = distance(location2.x, markerLatLong.x, location2.y, markerLatLong.y);
 						locationCounter++;
 						total += result;
+						ScoreOutput(result, total);
 						Debug.Log("Distance to Muir Beach: " + result);
 						break;
 					case 3:
 						result = distance(location3.x, markerLatLong.x, location3.y, markerLatLong.y);
 						locationCounter++;
 						total += result;
+						ScoreOutput(result, total);
 						Debug.Log("Distance to Miami: " + result);
 						break;
 					case 4:
 						result = distance(location4.x, markerLatLong.x, location4.y, markerLatLong.y);
 						locationCounter++;
 						total += result;
+						ScoreOutput(result, total);
 						Debug.Log("Distance to Times Square: " + result);
 						break;
 
@@ -298,6 +308,12 @@
 				Debug.Log("Total kilometers missed: " + total);
             }
 		}
+
+		void ScoreOutput(double levelScore, double totalScore)
+        {
+			levelMsg = String.Format("You have missed the target location by: {0}", Math.Round(levelScore, 4));
+			totalMsg = String.Format("Current total kilometers missed: {0}", Math.Round(totalScore, 4));
+        }
 
 		void HandleMouseAndKeyBoard()
 		{
