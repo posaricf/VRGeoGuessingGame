@@ -26,14 +26,12 @@
 		private Material currentSkybox;
 
 		public Text levelPoints;
-		public Text totalPoints;
-		public Text finalPoints;
 		string levelMsg;
-		string totalMsg;
+		string errorMsg;
 
 		[SerializeField]
 		[Range(1, 20)]
-		public float _panSpeed = 1.0f;
+		public float _panSpeed = 0.7f;
 
 		[SerializeField]
 		public float _zoomSpeed = 0.25f;
@@ -53,8 +51,6 @@
 		[SerializeField]
 		GameObject _markerPrefab;
 
-		List<GameObject> markers;
-
 		Vector2d location0;
 		Vector2d location1;
 		Vector2d location2;
@@ -64,6 +60,7 @@
 		double result;
 		double total;
 		int locationCounter;
+		int notAllowed;
 
 		Vector2d markerLatLong;
 		Vector2d latitudeLongitude;
@@ -107,10 +104,10 @@
 
 			locationCounter = 0;
 			total = 0;
+			notAllowed = 0;
 
-			levelMsg = "You have missed the target location by: n/a";
-			totalMsg = "Current total kilometers missed: n/a";
-			finalPoints.enabled = false;
+			levelMsg = "";
+			errorMsg = "";
 
 			currentSkybox = skybox[1];
 			
@@ -146,11 +143,8 @@
 					HandleThumbstick();
 
 					FixMarker();
-
-					levelPoints.text = levelMsg;
-					totalPoints.text = totalMsg;
-				}
-			}
+                }
+            }
 		}
 
 		private void ShowMap(InputAction.CallbackContext ctx)
@@ -295,17 +289,17 @@
 				var warningColor = new Color(0.5943396f, 0.03644537f, 0.03644537f, 1);
 				if (!map.activeInHierarchy)
                 {
-					levelMsg = "Map disabled. Interactions unavailable.";
-					totalMsg = "Cannot calculate total since map isn't active.";
+					errorMsg = "Map disabled. Interactions unavailable.";
+					//print(errorMsg);
 					levelPoints.color = warningColor;
-					totalPoints.color = warningColor;
+					levelPoints.text = errorMsg;
 				}
 				else if (toRemove == null)
 				{
-					levelMsg = "Please place a destination marker.";
-					totalMsg = "Cannot calculate total since destination marker doesn't exist.";
+					errorMsg = "Please place a destination marker.";
+					//print(errorMsg);
 					levelPoints.color = warningColor;
-					totalPoints.color = warningColor;
+					levelPoints.text = errorMsg;
 				}
 				else if (toRemove != null)
                 {
@@ -313,29 +307,25 @@
 					result = distance(destination.x, markerLatLong.x, destination.y, markerLatLong.y);
 					locationCounter++;
 					total += result;
-					ScoreOutput(result, total);
+					ScoreOutput(result);
 					ChangeBackground();
 				}
+				if (locationCounter == 5)
+				{
+					string breaker = "_______________________\n";
+					levelMsg += breaker + String.Format("Total: {0} km", Math.Round(total, 4));
+					levelPoints.text = levelMsg;
+				}
 			}
-			else if (locationCounter == 5)
-            {
-				levelPoints.enabled = false;
-				totalPoints.enabled = false;
-				finalPoints.enabled = true;
-				var finalMsg = String.Format("Grand total kilometers missed: {0} km.", Math.Round(total, 4));
-				finalPoints.color = Color.yellow;
-				finalPoints.text = finalMsg;
-				//Debug.Log("Total kilometers missed: " + total);
-            }
 		}
 
-		void ScoreOutput(double levelScore, double totalScore)
+		void ScoreOutput(double levelScore)
         {
-			levelMsg = String.Format("You have missed the target location by: {0} km.", Math.Round(levelScore, 4));
-			totalMsg = String.Format("Current total kilometers missed: {0} km.", Math.Round(totalScore, 4));
+			levelMsg += String.Format("> Level {0}: {1} km\n", locationCounter, Math.Round(levelScore, 4));
+			//Debug.Log(levelMsg);
 			levelPoints.color = Color.blue;
-			totalPoints.color = Color.blue;
-        }
+			levelPoints.text = levelMsg;
+		}
 
 		void ChangeBackground()
         {
@@ -346,7 +336,6 @@
 			{
 				if (i == skybox.Length - 1)
 				{
-					currentSkybox = skybox[0];
 					break;
 				}
 				if (currentSkybox == skybox[i])
