@@ -18,13 +18,18 @@
 		public InputActionReference zoomAction = null;
 		public InputActionReference markerAction = null;
 		public InputActionReference distanceAction = null;
+		public InputActionReference showMapAction = null; 
+
+		public GameObject map;
+
+		public Material[] skybox;
+		private Material currentSkybox;
 
 		public Text levelPoints;
 		public Text totalPoints;
+		public Text finalPoints;
 		string levelMsg;
 		string totalMsg;
-
-		//public SpawnOnMap spawnOnMap;
 
 		[SerializeField]
 		[Range(1, 20)]
@@ -63,6 +68,8 @@
 		Vector2d markerLatLong;
 		Vector2d latitudeLongitude;
 
+		List<Vector2d> locations;
+
 		private Vector2 zoomAxis;
 		private Vector2 thumbAxis;
 		private Vector3 _origin;
@@ -87,20 +94,27 @@
             moveXAction.action.performed += MoveX;
             moveYAction.action.performed += MoveY;
 			zoomAction.action.performed += ZoomThumbstick;
-			//submitButton.onClick.AddListener(SubmitOnClick);
 			markerAction.action.performed += CreateMarker;
 			distanceAction.action.performed += CalculateDistance;
+			showMapAction.action.performed += ShowMap;
 
 			location0 = new Vector2d(37.8097997, -122.4105405); //pier39
 			location1 = new Vector2d(40.7821132, -73.9702457); //central park
 			location2 = new Vector2d(37.8632798, -122.5878597); //muir beach
 			location3 = new Vector2d(25.7768336, -80.1843875); //miami
 			location4 = new Vector2d(40.7579174, -73.9861626); //times square
+			locations = new List<Vector2d> { location0, location1, location2, location3, location4 };
+
 			locationCounter = 0;
 			total = 0;
+
 			levelMsg = "You have missed the target location by: n/a";
 			totalMsg = "Current total kilometers missed: n/a";
-        }
+			finalPoints.enabled = false;
+
+			currentSkybox = skybox[1];
+			
+		}
 
 		public void Update()
 		{
@@ -139,7 +153,23 @@
 			}
 		}
 
-        void MoveX(InputAction.CallbackContext context)
+		private void ShowMap(InputAction.CallbackContext ctx)
+		{
+			var value = ctx.ReadValue<float>();
+			if (value > 0)
+			{
+				if (map.activeInHierarchy)
+				{
+					map.SetActive(false);
+				}
+				else
+				{
+					map.SetActive(true);
+				}
+			}
+		}
+
+		void MoveX(InputAction.CallbackContext context)
         {
             thumbAxis.x = context.ReadValue<float>();
             //Debug.Log("X VALUE: " + thumbAxis.x);
@@ -170,7 +200,6 @@
 				// Get the number of degrees in a tile at the current zoom level.
 				// Divide it by the tile width in pixels ( 256 in our case)
 				// to get degrees represented by each pixel.
-				// Keyboard offset is in pixels, therefore multiply the factor with the offset to move the center.
 				float factor = _panSpeed * (Conversions.GetTileScaleInDegrees((float)_mapManager.CenterLatitudeLongitude.x, _mapManager.AbsoluteZoom));
 
 				latitudeLongitude = new Vector2d(_mapManager.CenterLatitudeLongitude.x + thumbAxis.y * factor * 2.0f, _mapManager.CenterLatitudeLongitude.y + thumbAxis.x * factor * 4.0f);
@@ -190,7 +219,7 @@
 			}
 
 			//Debug.Log("primary button value: " + value);
-			if (value > 0)
+			if (value > 0 && map.activeInHierarchy)
 			{
 				var instance = Instantiate(_markerPrefab);
 
@@ -208,7 +237,6 @@
             {
 				var marker = GameObject.Find("CustomMarkerPrefab(Clone)");
 				marker.transform.position = _mapManager.GeoToWorldPosition(markerLatLong, true);
-				//marker.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
 			}
 			catch (Exception ex)
             {
@@ -263,57 +291,71 @@
 			var value = ctx.ReadValue<float>();
 			if (value > 0 && locationCounter < 5)
 			{
-				switch (locationCounter)
+				var toRemove = GameObject.Find("CustomMarkerPrefab(Clone)");
+				var warningColor = new Color(0.5943396f, 0.03644537f, 0.03644537f, 1);
+				if (!map.activeInHierarchy)
+                {
+					levelMsg = "Map disabled. Interactions unavailable.";
+					totalMsg = "Cannot calculate total since map isn't active.";
+					levelPoints.color = warningColor;
+					totalPoints.color = warningColor;
+				}
+				else if (toRemove == null)
 				{
-					case 0:
-						result = distance(location0.x, markerLatLong.x, location0.y, markerLatLong.y);
-						locationCounter++;
-						total += result;
-						ScoreOutput(result, total);
-						Debug.Log("Distance to Pier 39: " + result);
-						break;
-					case 1:
-						result = distance(location1.x, markerLatLong.x, location1.y, markerLatLong.y);
-						locationCounter++;
-						total += result;
-						ScoreOutput(result, total);
-						Debug.Log("Distance to Central Park: " + result);
-						break;
-					case 2:
-						result = distance(location2.x, markerLatLong.x, location2.y, markerLatLong.y);
-						locationCounter++;
-						total += result;
-						ScoreOutput(result, total);
-						Debug.Log("Distance to Muir Beach: " + result);
-						break;
-					case 3:
-						result = distance(location3.x, markerLatLong.x, location3.y, markerLatLong.y);
-						locationCounter++;
-						total += result;
-						ScoreOutput(result, total);
-						Debug.Log("Distance to Miami: " + result);
-						break;
-					case 4:
-						result = distance(location4.x, markerLatLong.x, location4.y, markerLatLong.y);
-						locationCounter++;
-						total += result;
-						ScoreOutput(result, total);
-						Debug.Log("Distance to Times Square: " + result);
-						break;
-
+					levelMsg = "Please place a destination marker.";
+					totalMsg = "Cannot calculate total since destination marker doesn't exist.";
+					levelPoints.color = warningColor;
+					totalPoints.color = warningColor;
+				}
+				else if (toRemove != null)
+                {
+					var destination = locations[locationCounter];
+					result = distance(destination.x, markerLatLong.x, destination.y, markerLatLong.y);
+					locationCounter++;
+					total += result;
+					ScoreOutput(result, total);
+					ChangeBackground();
 				}
 			}
 			else if (locationCounter == 5)
             {
-				Debug.Log("Total kilometers missed: " + total);
+				levelPoints.enabled = false;
+				totalPoints.enabled = false;
+				finalPoints.enabled = true;
+				var finalMsg = String.Format("Grand total kilometers missed: {0} km.", Math.Round(total, 4));
+				finalPoints.color = Color.yellow;
+				finalPoints.text = finalMsg;
+				//Debug.Log("Total kilometers missed: " + total);
             }
 		}
 
 		void ScoreOutput(double levelScore, double totalScore)
         {
-			levelMsg = String.Format("You have missed the target location by: {0}", Math.Round(levelScore, 4));
-			totalMsg = String.Format("Current total kilometers missed: {0}", Math.Round(totalScore, 4));
+			levelMsg = String.Format("You have missed the target location by: {0} km.", Math.Round(levelScore, 4));
+			totalMsg = String.Format("Current total kilometers missed: {0} km.", Math.Round(totalScore, 4));
+			levelPoints.color = Color.blue;
+			totalPoints.color = Color.blue;
         }
+
+		void ChangeBackground()
+        {
+			RenderSettings.skybox = currentSkybox;
+			DynamicGI.UpdateEnvironment();
+
+			for (int i = 0; i < skybox.Length; i++)
+			{
+				if (i == skybox.Length - 1)
+				{
+					currentSkybox = skybox[0];
+					break;
+				}
+				if (currentSkybox == skybox[i])
+				{
+					currentSkybox = skybox[i + 1];
+					break;
+				}
+			}
+		}
 
 		void HandleMouseAndKeyBoard()
 		{
