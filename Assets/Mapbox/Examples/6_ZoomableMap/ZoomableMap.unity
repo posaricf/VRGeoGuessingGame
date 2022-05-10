@@ -1185,6 +1185,8 @@ MonoBehaviour:
   _spawnScale: 0.2
   _markerPrefab: {fileID: 1839187062704024, guid: 9b5b1b761a8994c07affd0a05396633b,
     type: 3}
+  _targetPrefab: {fileID: 1839187062704024, guid: 6c6d578af71bcc341b3958e8f8159acd,
+    type: 3}
 --- !u!114 &555018388
 MonoBehaviour:
   m_ObjectHideFlags: 0

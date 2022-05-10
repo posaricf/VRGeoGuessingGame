@@ -81,7 +81,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1198850956108242}
-  m_Text: Guess
+  m_Text: Target
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -94,7 +94,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: 218956a5c2a6e42d6a60afccf80b002b, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4278782360
+    rgba: 4288154889
 --- !u!1 &1250323005008744
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +168,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 93067e9926a9bf2408fc06773f867569, type: 2}
+  - {fileID: 2100000, guid: 5c2a30f695a226e42833c623964bbc4f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 114657051886494624}
   - component: {fileID: 114584515627220354}
   m_Layer: 10
-  m_Name: CustomMarkerPrefab
+  m_Name: TargetMarkerPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

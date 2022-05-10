@@ -50,6 +50,9 @@
 
 		[SerializeField]
 		GameObject _markerPrefab;
+		
+		[SerializeField]
+		GameObject _targetPrefab;
 
 		Vector2d location0;
 		Vector2d location1;
@@ -60,6 +63,7 @@
 		double result;
 		double total;
 		int locationCounter;
+		int firstPass;
 		int notAllowed;
 
 		Vector2d markerLatLong;
@@ -104,6 +108,7 @@
 
 			locationCounter = 0;
 			total = 0;
+			firstPass = 0;
 			notAllowed = 0;
 
 			levelMsg = "";
@@ -150,34 +155,47 @@
 		private void ShowMap(InputAction.CallbackContext ctx)
 		{
 			var value = ctx.ReadValue<float>();
-			if (value > 0)
-			{
-				if (map.activeInHierarchy)
+			if (notAllowed == 0)
+            {
+				if (value > 0)
 				{
-					map.SetActive(false);
-				}
-				else
-				{
-					map.SetActive(true);
+					if (map.activeInHierarchy)
+					{
+						map.SetActive(false);
+					}
+					else
+					{
+						map.SetActive(true);
+					}
 				}
 			}
 		}
 
 		void MoveX(InputAction.CallbackContext context)
         {
-            thumbAxis.x = context.ReadValue<float>();
-            //Debug.Log("X VALUE: " + thumbAxis.x);
-        }
+			if (notAllowed == 0)
+            {
+				thumbAxis.x = context.ReadValue<float>();
+				//Debug.Log("X VALUE: " + thumbAxis.x);
+			}
+		}
 
         void MoveY(InputAction.CallbackContext context)
         {
-            thumbAxis.y = context.ReadValue<float>();
-            //Debug.Log("Y VALUE: " + thumbAxis.y);
-        }
+			if (notAllowed == 0)
+			{
+				thumbAxis.y = context.ReadValue<float>();
+				//Debug.Log("Y VALUE: " + thumbAxis.y);
+			}
+		}
 
 		void ZoomThumbstick(InputAction.CallbackContext ctx)
         {
-			zoomAxis.y = ctx.ReadValue<float>();
+			if (notAllowed == 0)
+            {
+				zoomAxis.y = ctx.ReadValue<float>();
+            }
+			
         }
 
 		public void HandleThumbstick()
@@ -206,22 +224,25 @@
 		void CreateMarker(InputAction.CallbackContext ctx)
         {
 			var value = ctx.ReadValue<float>();
-			var toRemove = GameObject.Find("CustomMarkerPrefab(Clone)");
-			if (toRemove != null)
-			{
-				Destroy(toRemove);
-			}
+			if (notAllowed == 0)
+            {
+				var toRemove = GameObject.Find("CustomMarkerPrefab(Clone)");
+				if (toRemove != null)
+				{
+					Destroy(toRemove);
+				}
 
-			//Debug.Log("primary button value: " + value);
-			if (value > 0 && map.activeInHierarchy)
-			{
-				var instance = Instantiate(_markerPrefab);
+				//Debug.Log("primary button value: " + value);
+				if (value > 0 && map.activeInHierarchy)
+				{
+					var instance = Instantiate(_markerPrefab);
 
-				instance.transform.localPosition = _mapManager.GeoToWorldPosition(latitudeLongitude, true);
-				instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
-				markerLatLong = new Vector2d(latitudeLongitude.x, latitudeLongitude.y);
+					instance.transform.localPosition = _mapManager.GeoToWorldPosition(latitudeLongitude, true);
+					instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+					markerLatLong = new Vector2d(latitudeLongitude.x, latitudeLongitude.y);
 
-				instance.transform.parent = _mapManager.transform;
+					instance.transform.parent = _mapManager.transform;
+				}
 			}
         }
 
@@ -231,6 +252,10 @@
             {
 				var marker = GameObject.Find("CustomMarkerPrefab(Clone)");
 				marker.transform.position = _mapManager.GeoToWorldPosition(markerLatLong, true);
+
+				var targetMarker = GameObject.Find("TargetMarkerPrefab(Clone)");
+				var targetMarkerLocation = new Vector2d(locations[locationCounter].x, locations[locationCounter].y);
+				targetMarker.transform.position = _mapManager.GeoToWorldPosition(targetMarkerLocation, true);
 			}
 			catch (Exception ex)
             {
@@ -305,12 +330,39 @@
                 {
 					var destination = locations[locationCounter];
 					result = distance(destination.x, markerLatLong.x, destination.y, markerLatLong.y);
-					locationCounter++;
 					total += result;
-					ScoreOutput(result);
-					ChangeBackground();
+
+					if (firstPass == 0)
+                    {
+						firstPass = 1;
+						notAllowed = 1;
+
+						ScoreOutput(result);
+
+						var instance = Instantiate(_targetPrefab);
+						var instanceLatLong = new Vector2d(destination.x, destination.y);
+						instance.transform.localPosition = _mapManager.GeoToWorldPosition(instanceLatLong, true);
+						instance.transform.localScale = new Vector3(_spawnScale, _spawnScale, _spawnScale);
+
+						instance.transform.parent = _mapManager.transform;
+					}
+					else if (firstPass == 1)
+                    {
+						var targetToRemove = GameObject.Find("TargetMarkerPrefab(Clone)");
+						Destroy(targetToRemove);
+
+						locationCounter++;
+
+						if (locationCounter < 5)
+                        {
+							firstPass = 0;
+							notAllowed = 0;
+						}
+
+						ChangeBackground();
+                    }
 				}
-				if (locationCounter == 5)
+				if (locationCounter == 4 && firstPass == 1)
 				{
 					string breaker = "_______________________\n";
 					levelMsg += breaker + String.Format("Total: {0} km", Math.Round(total, 4));
@@ -321,7 +373,7 @@
 
 		void ScoreOutput(double levelScore)
         {
-			levelMsg += String.Format("> Level {0}: {1} km\n", locationCounter, Math.Round(levelScore, 4));
+			levelMsg += String.Format("> Level {0}: {1} km\n", locationCounter+1, Math.Round(levelScore, 4));
 			//Debug.Log(levelMsg);
 			levelPoints.color = Color.blue;
 			levelPoints.text = levelMsg;
