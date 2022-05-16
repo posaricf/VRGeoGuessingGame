@@ -330,12 +330,14 @@
                 {
 					var destination = locations[locationCounter];
 					result = distance(destination.x, markerLatLong.x, destination.y, markerLatLong.y);
-					total += result;
 
 					if (firstPass == 0)
                     {
 						firstPass = 1;
 						notAllowed = 1;
+
+						total += result;
+						//Debug.Log(total);
 
 						ScoreOutput(result);
 
